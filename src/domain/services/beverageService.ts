@@ -43,8 +43,8 @@ export class BeverageService {
         if (beverage.prepare(this.ingredientsRepository.getAllIngredients())) {
             const change = amount - recipe.price;
 
-            const txId = await new TransactionBroadcaster().SendAsync(JSON.stringify({ "beverage": beverageName, "paid": amount, "change": change }));
-
+            // const txId = await new TransactionBroadcaster().SendAsync(JSON.stringify({ "beverage": beverageName, "paid": amount, "change": change }));
+            const txId = '1234567890abcdef'; // Placeholder for transaction ID
             return  { change: this.calculateChange(change), txId };
         } else {
            throw new BadRequest(`Cannot prepare ${beverageName}. Not enough ingredients.`);

@@ -16,7 +16,7 @@ This project aims to develop a system to manage a beverage vending machine. Each
 ## Technologies Used
 
 - **Node.js**: For building RESTful APIs.
-- **TAAL API**: For broadcasting transactions to BSV. You can create a free account and obtain an API key [here](https://platform.taal.com/pricing?plan=taal-api).
+<!-- - **TAAL API**: For broadcasting transactions to BSV. You can create a free account and obtain an API key [here](https://platform.taal.com/pricing?plan=taal-api). -->
 
 ## Installation
 
@@ -38,18 +38,18 @@ This project aims to develop a system to manage a beverage vending machine. Each
 
 ## Running the Service
 
-1. Create a `.env` file in the root directory and add the following environment variables:
+<!-- 1. Create a `.env` file in the root directory and add the following environment variables:
     ```plaintext
     BROADCASTER_URL=your_broadcaster_url
     BROADCASTER_APIKEY=your_broadcaster_apikey
     FUND_TRANSACTION=your_fund_transaction
     PKEY=your_primary_key
-    ```
-2. Start the server:
+    ``` -->
+1. Start the server:
     ```bash
     npm start
     ```
-3. The service will be available at `http://localhost:3000`.
+2. The service will be available at `http://localhost:3000`.
 
 ## Testing
 
@@ -119,9 +119,9 @@ Returns a list of ingredients and their quantities as JSON objects.
 ]
 ```
 
-## JSON Propagation to BSV
+<!-- ## JSON Propagation to BSV
 
-Successful transactions are propagated as a JSON object into BSV (Bitcoin SV) using the TAAL API to ensure transparency and traceability.
+Successful transactions are propagated as a JSON object into BSV (Bitcoin SV) using the TAAL API to ensure transparency and traceability. -->
 
 ## Limitations and Considerations
 
