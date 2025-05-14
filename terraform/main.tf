@@ -32,6 +32,13 @@ module "alb" {
   alb_security_groups = [module.network.alb_security_group_id]
 }
 
+module "nlb" {
+  source       = "./modules/nlb"
+  vpc_id       = module.network.vpc_id
+  private_subnets = module.network.private_subnets
+  env_prefix   = var.environment_prefix
+}
+
 module "ecs" {
   source                      = "./modules/ecs"
   vpc_id                      = module.network.vpc_id
@@ -43,7 +50,9 @@ module "ecs" {
   ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
   container_image             = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.environment_prefix}-repo:latest"
   alb_target_group_arn        = module.alb.alb_target_group_arn
-  ecs_security_group_id       = module.network.ecs_security_group_id # Add this line
+  nlb_target_group_arn        = module.nlb.vpc_link_target_group_arn
+  ecs_security_group_id       = module.network.ecs_security_group_id
+  
 }
 
 module "api_gateway" {
@@ -56,4 +65,5 @@ module "api_gateway" {
   env_prefix          = var.environment_prefix
   private_route_paths = ["/ingredients"]
   public_route_paths  = ["/beverages"]
+  vpc_link_target_arn = module.nlb.nlb_arn
 }

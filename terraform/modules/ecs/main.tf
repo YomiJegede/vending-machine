@@ -43,7 +43,13 @@ resource "aws_ecs_service" "main" {
   }
 
   load_balancer {
-    target_group_arn = var.alb_target_group_arn
+    target_group_arn = var.alb_target_group_arn  # ALB for public routes
+    container_name   = "${var.env_prefix}-container"
+    container_port   = 3000
+  }
+
+  load_balancer {
+    target_group_arn = var.nlb_target_group_arn  # NLB for VPC Link
     container_name   = "${var.env_prefix}-container"
     container_port   = 3000
   }
