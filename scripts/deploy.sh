@@ -1,6 +1,5 @@
 #!/bin/bash
 set -euo pipefail  # Strict error handling
-#shopt -s inherit_errexit  # Ensure subshells inherit error handling
 
 # Color definitions for output
 RED='\033[0;31m'
@@ -36,19 +35,19 @@ function validate_aws_credentials() {
 # Docker image handling
 function handle_docker() {
   log_info "=== Docker Image Handling ==="
-  
+
   AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
   AWS_REGION=$(aws configure get region)
   ECR_REPO="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/beverage-vending-repo"
 
   # ECR Login
   log_info "Logging into ECR..."
-  if ! aws ecr get-login-password | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com" >/dev/null; then
+  if ! aws ecr get-login-password | docker login --username AWS --password-stdin "${ECR_REPO}" >/dev/null; then
     log_error "Failed to login to ECR"
     exit 1
   fi
 
-  # ECR Repository
+  # Ensure repository exists
   log_info "Checking ECR repository..."
   if ! aws ecr describe-repositories --repository-names beverage-vending-repo >/dev/null 2>&1; then
     log_info "Creating ECR repository..."
@@ -58,22 +57,27 @@ function handle_docker() {
     fi
   fi
 
-  # Docker Build
-  log_info "Building Docker image..."
-  if ! docker build -t beverage-vending-machine -f ../Dockerfile ..; then
-    log_error "Docker build failed"
+  # Ensure buildx builder exists and is used
+  if ! docker buildx inspect multi-builder >/dev/null 2>&1; then
+    log_info "Creating Docker Buildx builder..."
+    docker buildx create --name multi-builder --use
+  else
+    docker buildx use multi-builder
+  fi
+
+  # Build and push for linux/amd64
+  log_info "Building Docker image for linux/amd64..."
+  if ! docker buildx build \
+    --platform linux/amd64 \
+    -t "${ECR_REPO}:latest" \
+    -f ../Dockerfile \
+    ../ \
+    --push; then
+    log_error "Docker build or push failed"
     exit 1
   fi
 
-  # Docker Push
-  log_info "Tagging and pushing image..."
-  docker tag beverage-vending-machine:latest "${ECR_REPO}:latest"
-  if ! docker push "${ECR_REPO}:latest"; then
-    log_error "Failed to push Docker image"
-    exit 1
-  fi
-
-  log_success "Docker image pushed successfully"
+  log_success "Docker image successfully built and pushed to ECR"
 }
 
 # Terraform deployment
