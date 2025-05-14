@@ -48,9 +48,12 @@ resource "aws_ecs_service" "main" {
     container_port   = 3000
   }
 
-  load_balancer {
-    target_group_arn = var.nlb_target_group_arn  # NLB for VPC Link
-    container_name   = "${var.env_prefix}-container"
-    container_port   = 3000
+  dynamic "load_balancer" {
+    for_each = var.nlb_target_group_arn != "" ? [1] : []
+    content {
+      target_group_arn = var.nlb_target_group_arn
+      container_name   = "${var.env_prefix}-container"
+      container_port   = 3000
+    }
   }
 }

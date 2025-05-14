@@ -50,9 +50,10 @@ module "ecs" {
   ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
   container_image             = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.environment_prefix}-repo:latest"
   alb_target_group_arn        = module.alb.alb_target_group_arn
+  nlb_target_group_arn        = module.nlb.nlb_target_group_arn
   nlb_target_group_arn        = module.nlb.vpc_link_target_group_arn
   ecs_security_group_id       = module.network.ecs_security_group_id
-  
+ 
 }
 
 module "api_gateway" {
