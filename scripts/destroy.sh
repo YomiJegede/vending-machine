@@ -17,7 +17,7 @@ if [[ "$confirmation" != "destroy" ]]; then
 fi
 
 echo -e "\n=== Destroying Terraform Infrastructure ==="
-cd terraform
+cd ../terraform
 
 # Show what will be destroyed
 echo "Terraform destruction plan:"

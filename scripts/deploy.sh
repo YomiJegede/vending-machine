@@ -80,7 +80,7 @@ function handle_docker() {
 function handle_terraform() {
   log_info "=== Terraform Deployment ==="
   
-  cd terraform || { log_error "Failed to enter terraform directory"; exit 1; }
+  cd ../terraform || { log_error "Failed to enter terraform directory"; exit 1; }
 
   # Terraform Init
   log_info "Initializing Terraform..."
