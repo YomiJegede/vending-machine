@@ -6,8 +6,8 @@ resource "aws_ecs_task_definition" "app" {
   family                   = "${var.env_prefix}-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = var.ecs_task_cpu
-  memory                   = var.ecs_task_memory
+  cpu                      = 256
+  memory                   = 512
   execution_role_arn       = var.ecs_task_execution_role_arn
 
   container_definitions = jsonencode([{
