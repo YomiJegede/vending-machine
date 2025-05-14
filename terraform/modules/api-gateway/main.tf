@@ -40,7 +40,8 @@ resource "aws_api_gateway_integration" "public" {
   http_method             = aws_api_gateway_method.public[count.index].http_method
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
-  uri                     = "http://${var.alb_dns_name}${var.public_route_paths[count.index]}"
+  uri                     = "http://${var.alb_dns_name}/beverages" 
+ 
 }
 
 resource "aws_api_gateway_integration" "private" {
