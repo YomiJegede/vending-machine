@@ -1,8 +1,8 @@
 resource "aws_lb" "vpc_link_nlb" {
   name               = "${var.env_prefix}-vpc-link-nlb"
   load_balancer_type = "network"
-  internal           = true  # internal only for VPC Link
-  subnets            = var.private_subnets  # Deploy in private subnets
+  internal           = true
+  subnets            = var.private_subnets  # Now using the variable
 
   tags = {
     Name = "${var.env_prefix}-vpc-link-nlb"

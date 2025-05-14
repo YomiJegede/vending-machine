@@ -67,5 +67,5 @@ resource "aws_api_gateway_deployment" "deployment" {
 
 resource "aws_api_gateway_vpc_link" "vpc_link" {
   name        = "${var.env_prefix}-vpc-link"
-  target_arns = [var.alb_arn]
+  target_arns = [var.vpc_link_target_arn]  # Must match variable name
 }

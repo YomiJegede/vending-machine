@@ -37,3 +37,8 @@ variable "public_route_paths" {
   description = "List of public route paths"
   type        = list(string)
 }
+
+variable "vpc_link_target_arn" {  # This must match exactly what you're passing
+  description = "ARN of the NLB for VPC Link"
+  type        = string
+}
