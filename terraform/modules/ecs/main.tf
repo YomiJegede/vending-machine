@@ -1,3 +1,8 @@
+resource "aws_cloudwatch_log_group" "ecs_task_log_group" {
+  name              = "/ecs/${var.env_prefix}-task"
+  retention_in_days = 7
+}
+
 resource "aws_ecs_cluster" "main" {
   name = "${var.env_prefix}-cluster"
 }
@@ -21,9 +26,9 @@ resource "aws_ecs_task_definition" "app" {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        "awslogs-group"         = "/ecs/${var.env_prefix}-task"
-        "awslogs-region"        = var.aws_region
-        "awslogs-stream-prefix" = "ecs"
+        awslogs-group         = aws_cloudwatch_log_group.ecs_task_log_group.name
+        awslogs-region        = var.aws_region
+        awslogs-stream-prefix = "ecs"
       }
     }
   }])
@@ -43,7 +48,7 @@ resource "aws_ecs_service" "main" {
   }
 
   load_balancer {
-    target_group_arn = var.alb_target_group_arn  # ALB for public routes
+    target_group_arn = var.alb_target_group_arn
     container_name   = "${var.env_prefix}-container"
     container_port   = 3000
   }
