@@ -8,11 +8,11 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "public" {
-  count             = length(var.azs)
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index)
-  availability_zone = var.azs[count.index]
-  map_public_ip_on_launch = true
+  count                   = length(var.azs)
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = cidrsubnet(var.vpc_cidr, 8, count.index)
+  availability_zone       = var.azs[count.index]
+  map_public_ip_on_launch = true  # Critical for NAT Gateway placement
   tags = {
     Name = "${var.env_prefix}-public-${var.azs[count.index]}"
   }
@@ -113,13 +113,15 @@ resource "aws_security_group" "nlb" {
 }
 
 resource "aws_eip" "nat" {
-  tags = { Name = "${var.env_prefix}-nat-eip" }
+  # domain = "vpc"
+  tags   = { Name = "${var.env_prefix}-nat-eip" }
 }
 
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = "subnet-03aaf560f3bcf2b6f" # Your public subnet
+  subnet_id     = aws_subnet.public[0].id  # Use dynamically created public subnet
   tags          = { Name = "${var.env_prefix}-nat-gw" }
+  depends_on    = [aws_internet_gateway.gw]
 }
 
 resource "aws_route_table" "private" {
@@ -127,6 +129,9 @@ resource "aws_route_table" "private" {
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.main.id
+  }
+  tags = {
+    Name = "${var.env_prefix}-private-rt"
   }
 }
 
