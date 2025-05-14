@@ -112,24 +112,16 @@ resource "aws_security_group" "nlb" {
   }
 }
 
-# 1. Create EIP (no domain argument)
 resource "aws_eip" "nat" {
-  tags = {
-    Name = "${var.env_prefix}-nat-eip"
-  }
+  tags = { Name = "${var.env_prefix}-nat-eip" }
 }
 
-# 2. Create NAT Gateway in public subnet
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public[0].id
-  tags = {
-    Name = "${var.env_prefix}-nat-gw"
-  }
-  depends_on = [aws_internet_gateway.gw]
+  subnet_id     = "subnet-03aaf560f3bcf2b6f" # Your public subnet
+  tags          = { Name = "${var.env_prefix}-nat-gw" }
 }
 
-# 3. Private route table with NAT route
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
   route {
@@ -138,7 +130,7 @@ resource "aws_route_table" "private" {
   }
 }
 
-# 4. Associate with private subnets
+# Associate with private subnets
 resource "aws_route_table_association" "private" {
   count          = length(aws_subnet.private)
   subnet_id      = aws_subnet.private[count.index].id
