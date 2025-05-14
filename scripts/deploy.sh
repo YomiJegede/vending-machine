@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail  # Strict error handling
-shopt -s inherit_errexit  # Ensure subshells inherit error handling
+#shopt -s inherit_errexit  # Ensure subshells inherit error handling
 
 # Color definitions for output
 RED='\033[0;31m'
@@ -60,7 +60,7 @@ function handle_docker() {
 
   # Docker Build
   log_info "Building Docker image..."
-  if ! docker build -t beverage-vending-machine .; then
+  if ! docker build -t beverage-vending-machine -f ../Dockerfile ..; then
     log_error "Docker build failed"
     exit 1
   fi
