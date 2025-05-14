@@ -44,6 +44,6 @@ variable "alb_target_group_arn" {
 }
 
 variable "ecs_security_group_id" {
-  description = "ECS security group ID"
+  description = "Security group ID for ECS tasks"
   type        = string
 }
