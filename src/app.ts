@@ -17,6 +17,11 @@ app.use(cors({
 app.use(helmet());
 app.use(bodyParser.json());
 
+// Health check endpoint (responds with HTTP 200)
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
+
 const server = http.createServer(app);
 
 const PORT = 3000;
