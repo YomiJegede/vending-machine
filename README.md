@@ -17,7 +17,6 @@ This project aims to develop a system to manage a beverage vending machine. Each
 
 The deployment design and architecture for the beverage vending machine microservice is implemented on AWS using Terraform for infrastructure provisioning. Public and private endpoints are separated by routing public traffic through an Application Load Balancer (ALB) and private API requests through a Network Load Balancer (NLB) integrated with API Gateway VPC Link. The system operates within a VPC using private subnets, with a NAT Gateway enabling secure outbound internet access.
 
-
 ## Key Components
 ###Public Access
 **API Gateway**: Exposes only /beverages to the internet
@@ -66,7 +65,7 @@ The deployment design and architecture for the beverage vending machine microser
     End User -->|HTTPS| --> APIGateway
 
 ### AWS Private Zone
-    APIGateway -->|VPC Link| NLB[Network Load Balancer --> Private only --> TLS termination]
+    APIGateway -->|VPC Link| NLB[Network Load Balancer --> Private only]
     
 ### VPC
      NLB -->|:3000| FargateTasks[ECS Fargate Tasks --> LaunchType=FARGATE --> SSM Exec access --> ingredients GET/]
