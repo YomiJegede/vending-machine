@@ -14,7 +14,7 @@ export class BeverageController {
 
     public GetBeverages(req: Request, res: Response) {
         const beverages = this.beverageService.GetBeverages();
-        
+
         const beverageList: BeverageInfo[] = Object.keys(beverages).map(beverageName => {
             return new BeverageInfo(beverageName, beverages[beverageName].price);
         });
@@ -24,7 +24,7 @@ export class BeverageController {
 
     public GetIngredients(req: Request, res: Response) {
         const ingredients = this.beverageService.GetIngredients();
-        
+
         const ingredientList: Ingredient[] = Object.keys(ingredients).map(name => {
             return new Ingredient(name, ingredients[name].quantity);
         });
@@ -34,7 +34,12 @@ export class BeverageController {
 
     public async PrepareBeverage(req: Request, res: Response) {
         const { beverageName, sugarLevel, coins }: { beverageName: string, sugarLevel: number | null, coins: number[] } = req.body;
-        
+
+        // Validate inputs
+        if (!beverageName || !Array.isArray(coins)) {
+            return res.status(400).json({ error: 'Missing or invalid "beverageName" or "coins" in request body.' }).end();
+        }
+
         try {
             const { change, txId } = await this.beverageService.PrepareBeverage(beverageName, sugarLevel, coins.map(x => new Coin(x)));
             return res.status(200).json(new Beverage(beverageName, change.map(x => x.getDenomination()), txId)).end()
