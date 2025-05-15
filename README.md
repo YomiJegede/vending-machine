@@ -49,6 +49,7 @@ The deployment design and architecture for the beverage vending machine microser
 ### Scaling
 **Horizontal Scaling**:
 	ECS service auto-scaling based on CPU/memory usage
+
 **Vertical Scaling**:
 	Adjust Fargate task CPU/memory allocation
 
@@ -124,13 +125,13 @@ The deployment design and architecture for the beverage vending machine microser
 
 5. ## Test the end endpoints:
 	### Public endpoints:
-	# Get API Gateway URL from outputs
+	### Get API Gateway URL from outputs
 	export API_URL="https://ybxxezkhmb.execute-api.eu-west-1.amazonaws.com/test"
 
-	# GET /beverages (public)
+	### GET /beverages (public)
 		curl "${API_URL}/beverages"
 
-	# POST /beverages request with JSON body
+	### POST /beverages request with JSON body
 		curl -X POST "${API_URL}/beverages" \
   			-H "Content-Type: application/json" \
   			-d '{
