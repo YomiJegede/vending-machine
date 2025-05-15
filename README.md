@@ -114,7 +114,9 @@ The deployment design and architecture for the beverage vending machine microser
 	`./deploy.sh`
 
 4. On successful deployment, note the outputs for public and private endpoints and the VPC
-	example:
+
+	Example:
+	
 	`api_gateway_url = "https://ybxxezkhmb.execute-api.eu-west-1.amazonaws.com/test"`
 
     `ecs_service_name = "beverage-vending-service"`
