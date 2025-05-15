@@ -18,12 +18,14 @@ This project aims to develop a system to manage a beverage vending machine. Each
 The deployment design and architecture for the beverage vending machine microservice is implemented on AWS using Terraform for infrastructure provisioning. Public and private endpoints are separated by routing public traffic through an Application Load Balancer (ALB) and private API requests through a Network Load Balancer (NLB) integrated with API Gateway VPC Link. The system operates within a VPC using private subnets, with a NAT Gateway enabling secure outbound internet access.
 
 ## Key Components
-###Public Access
+### Public Access
 **API Gateway**: Exposes only /beverages to the internet
+
 **HTTPS**: Automatic TLS termination
 
 ### Private Access
 **NLB**: Handles VPC Link traffic for API Gateway
+
 **ALB**: Internal routing for /ingredients
 
 ### Compute
@@ -41,6 +43,7 @@ The deployment design and architecture for the beverage vending machine microser
 
 ### Operational Tools
 **SSM Session Manager**: Secure shell access without bastion hosts
+
 **CloudWatch Logs**: Centralized logging and monitoring for all containers
 
 ### Scaling
@@ -51,12 +54,19 @@ The deployment design and architecture for the beverage vending machine microser
 
 ### Technologies Used
 **Node.js**: For building RESTful APIs.
+
 **AWS**: Comprehensive cloud services with good Terraform support
+
 **Terraform**: Industry-standard IaC tool for reproducible infrastructure
+
 **ECR (Elastic Container Registry)**: Docker images storage and ECS Fargate pulls images directly from ECR during task launch
+
 **ECS Fargate**: Serverless containers simplify deployment and scaling
+
 **API Gateway**: Flexible endpoint management with built-in security
+
 **Docker**: Containerization ensures consistent runtime environment
+
 **Shell Scripting**: To package the deployment and for de-provioning
 
 
@@ -92,22 +102,27 @@ The deployment design and architecture for the beverage vending machine microser
 
 ## Deployment Steps
 1. Clone the Repository
-	git clone git@github.com:YomiJegede/vending-machine.git
+	`git clone git@github.com:YomiJegede/vending-machine.git`
 
 2. Navigate to the project directory
-	cd vending-machine/scripts
+
+	`cd vending-machine/scripts`
 
 3. Grant `deploy.sh` necesary permisions if needed `chmod +x deploy.sh` , Run deploy script and follow the on screen instructions
-	./deploy.sh
+
+	`./deploy.sh`
 
 4. On successful deployment, note the outputs for public and private endpoints and the VPC
 	example:
-	api_gateway_url = "https://ybxxezkhmb.execute-api.eu-west-1.amazonaws.com/test"
-    ecs_service_name = "beverage-vending-service"
-    private_endpoint_url = "beverage-vending-alb-189198045.eu-west-1.elb.amazonaws.com"
-    vpc_id = "vpc-04a3b04acf51d3812"
+	`api_gateway_url = "https://ybxxezkhmb.execute-api.eu-west-1.amazonaws.com/test"`
 
-5. Test the end endpoints:
+    `ecs_service_name = "beverage-vending-service"`
+
+    `private_endpoint_url = "beverage-vending-alb-189198045.eu-west-1.elb.amazonaws.com"`
+
+    `vpc_id = "vpc-04a3b04acf51d3812"`
+
+5. ## Test the end endpoints:
 	### Public endpoints:
 	# Get API Gateway URL from outputs
 	export API_URL="https://ybxxezkhmb.execute-api.eu-west-1.amazonaws.com/test"
@@ -123,9 +138,8 @@ The deployment design and architecture for the beverage vending machine microser
     		"sugarLevel": 1,
     		"coins": [1, 1, 1]
   			}'
-
-  	### Private Endpoints: set TASK_ARN
-  	TASK_ARN=$(aws ecs list-tasks --cluster beverage-vending-cluster --query 'taskArns[0]' --output text)
+	### Private Endpoints: set TASK_ARN
+  	`TASK_ARN=$(aws ecs list-tasks --cluster beverage-vending-cluster --query 'taskArns[0]' --output text)`
 
   	# Connect to SSM:
 		aws ecs execute-command \
@@ -141,6 +155,9 @@ The deployment design and architecture for the beverage vending machine microser
 
 
 6. Remember to destroy the deployment with `destroy.sh` script. Follow the on screen 		instructions.
+
    Grant `destroy.sh` necesary permisions if needed `chmod +x destroy.sh` , Run destroy script
-    cd vending-machine/scripts
-	./destroy.sh
+
+    `cd vending-machine/scripts`
+
+	`./destroy.sh`
