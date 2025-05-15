@@ -1,6 +1,9 @@
 # Use official Node.js LTS image
 FROM node:18-alpine
 
+# Install curl
+RUN apk add --no-cache curl
+
 # Create app directory
 WORKDIR /usr/src/app
 
