@@ -125,13 +125,13 @@ The deployment design and architecture for the beverage vending machine microser
 
 5. ## Test the end endpoints:
 	### Public endpoints:
-	### Get API Gateway URL from outputs
+	#### Get API Gateway URL from outputs
 	export API_URL="https://ybxxezkhmb.execute-api.eu-west-1.amazonaws.com/test"
 
 	### GET /beverages (public)
 		curl "${API_URL}/beverages"
 
-	### POST /beverages request with JSON body
+	#### POST /beverages request with JSON body
 		curl -X POST "${API_URL}/beverages" \
   			-H "Content-Type: application/json" \
   			-d '{
@@ -139,10 +139,10 @@ The deployment design and architecture for the beverage vending machine microser
     		"sugarLevel": 1,
     		"coins": [1, 1, 1]
   			}'
-	### Private Endpoints: set TASK_ARN
+	#### Private Endpoints: set TASK_ARN
   	`TASK_ARN=$(aws ecs list-tasks --cluster beverage-vending-cluster --query 'taskArns[0]' --output text)`
 
-  	# Connect to SSM:
+  	#### Connect to SSM:
 		aws ecs execute-command \
   		--cluster beverage-vending-cluster \
   		--task $TASK_ARN \
@@ -150,7 +150,7 @@ The deployment design and architecture for the beverage vending machine microser
   		--command "/bin/sh" \
   		--interactive
 
-	# Test the private ALB endpoint
+	#### Test the private ALB endpoint
       Get private_endpoint_url from outputs
 		curl -v "http://beverage-vending-alb-189198045.eu-west-1.elb.amazonaws.com/ingredients"
 
