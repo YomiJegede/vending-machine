@@ -13,127 +13,129 @@ This project aims to develop a system to manage a beverage vending machine. Each
 5. **Beverage Dispensing**: If sufficient ingredients are available, the beverage is dispensed and change is returned.
 6. **Transaction Propagation**: Successful transactions are propagated as a JSON object into BSV (Bitcoin SV).
 
-## Technologies Used
+The deployment design and architecture for the beverage vending machine microservice is implemented on AWS using Terraform for infrastructure provisioning. Public and private endpoints are separated by routing public traffic through an Application Load Balancer (ALB) and private API requests through a Network Load Balancer (NLB) integrated with API Gateway VPC Link. The system operates within a VPC using private subnets, with a NAT Gateway enabling secure outbound internet access.
 
-- **Node.js**: For building RESTful APIs.
-<!-- - **TAAL API**: For broadcasting transactions to BSV. You can create a free account and obtain an API key [here](https://platform.taal.com/pricing?plan=taal-api). -->
 
-## Installation
+## Key Components
+###Public Access
+**API Gateway**: Exposes only /beverages to the internet
+**HTTPS**: Automatic TLS termination
 
-1. Clone the repository
+### Private Access
+**NLB**: Handles VPC Link traffic for API Gateway
+**ALB**: Internal routing for /ingredients
 
-2. Navigate to the project directory:
-    ```bash
-    cd beverage-vending-machine
-    ```
-3. Install dependencies:
-    ```bash
-    npm install
-    ```
+### Compute
+**Fargate Tasks**: Containerized deployment of the microservice
+	No EC2 instances
+	SSM Exec for direct debugging
+	Auto-scaling capable
 
-4. Build:
-    ```bash
-    npm run build
-    ```
+### Security
+**Isolated Networking**:
+	Private subnets + NAT Gateway/VPC endpoints
 
-## Running the Service
+**IAM-Based Access**:
+	SSM requires ecs:ExecuteCommand permissions
 
-<!-- 1. Create a `.env` file in the root directory and add the following environment variables:
-    ```plaintext
-    BROADCASTER_URL=your_broadcaster_url
-    BROADCASTER_APIKEY=your_broadcaster_apikey
-    FUND_TRANSACTION=your_fund_transaction
-    PKEY=your_primary_key
-    ``` -->
-1. Start the server:
-    ```bash
-    npm start
-    ```
-2. The service will be available at `http://localhost:3000`.
+### Operational Tools
+**SSM Session Manager**: Secure shell access without bastion hosts
+**CloudWatch Logs**: Centralized logging and monitoring for all containers
 
-## Testing
+### Scaling
+**Horizontal Scaling**:
+	ECS service auto-scaling based on CPU/memory usage
+**Vertical Scaling**:
+	Adjust Fargate task CPU/memory allocation
 
-1. Run the tests:
-    ```bash
-    npm test
-    ```
+### Technologies Used
+**Node.js**: For building RESTful APIs.
+**AWS**: Comprehensive cloud services with good Terraform support
+**Terraform**: Industry-standard IaC tool for reproducible infrastructure
+**ECS Fargate**: Serverless containers simplify deployment and scaling
+**API Gateway**: Flexible endpoint management with built-in security
+**Docker**: Containerization ensures consistent runtime environment
+**Shell Scripting**: To package the deployment and for de-provioning
 
-## Endpoints
 
-### Get Beverages
-```http
-GET /beverages
-```
-Returns a list of available beverages as JSON objects.
-```json
-[
-    {
-        "name": "Coffee",
-        "price": 2.5
-    },
-    {
-        "name": "Tea",
-        "price": 1.5
-    }
-]
-```
+## Architecture Overview 
+### AWS Public Zone
+    APIGateway --> API Gateway --> Public endpoints --> beverages GET|POST/]
+    End User -->|HTTPS| --> APIGateway
 
-### Prepare Beverage
-```http
-POST /beverages
-```
+### AWS Private Zone
+    APIGateway -->|VPC Link| NLB[Network Load Balancer --> Private only --> TLS termination]
+    
+### VPC
+     NLB -->|:3000| FargateTasks[ECS Fargate Tasks --> LaunchType=FARGATE --> SSM Exec access --> ingredients GET/]
+      
+      FargateTasks --> ALB[Application LB --> Internal --> Path-based routing]
+      ALB -->|:3000| FargateTasks
+      FargateTasks --> ECR[ECR Private Repo]
+      SSM[SSM Session Manager] -->|Secure Shell| FargateTasks
 
-The body of the request should contain the following JSON object:
-```json
-{
-    "beverageName": "coffee",
-    "sugarLevel": 3,
-    "coins": [2, 0.2, 0.2, 0.2 ]
-}
-```
+	  Admin --> AWSCLI --> |SSM CLI| SSM
 
-Prepares the selected beverage and returns the transaction details as a JSON object.
-```json
-{
-    "name": "Coffee",
-    "change": [0.5, 1.0],
-    "txId": "75cec78bde44180e92a40....d69b39f1624c1c54b538"
-}
-```
+##  Setup Guide
+### Prerequisites
+1. AWS account with administrative privileges	
+2. AWS CLI installed and configured - Default Region: eu-west-1 application is deployed in eu-west-1
+3. Terraform version >= 3.40.0 required for Terraform AWS Provider to support enable_execute_command.
+4. Docker installed
+5. Node.js v18+ installed
+6. AWS Systems Manager (SSM) Session Manager is enable to securely access ECS tasks in the private subnet
+7. AWS CLI v2.2.0 and later is required for ecs execute-command
+8. Install Session Manager Plugin - this is required for ecs execute-command to open the interactive session in AWSCLI
 
-### Get Ingredients
-```http
-GET /ingredients
-```
-Returns a list of ingredients and their quantities as JSON objects.
-```json
-[
-    {
-        "name": "water",
-        "quantity": 1000
-    },
-    {
-        "name": "coffee",
-        "quantity": 500
-    }
-]
-```
 
-<!-- ## JSON Propagation to BSV
+## Deployment Steps
+1. Clone the Repository
+	git clone git@github.com:YomiJegede/vending-machine.git
 
-Successful transactions are propagated as a JSON object into BSV (Bitcoin SV) using the TAAL API to ensure transparency and traceability. -->
+2. Navigate to the project directory
+	cd vending-machine
 
-## Limitations and Considerations
+3. Run deploy script and follow on screen instructions
+	./scripts/deploy.sh
 
-This solution is a demonstration and has several limitations and considerations to be aware of:
+4. On successful deployment, note the outputs for public and private endpoints and the VPC
+	example:
+	api_gateway_url = "https://0cdx6380gc.execute-api.eu-west-1.amazonaws.com/prod"
+	ecs_service_name = "beverage-vending-service"
+	private_endpoint_url = "beverage-vending-alb-1420752413.eu-west-1.elb.amazonaws.com"
+	vpc_id = "vpc-004c4c235a61d41da"
 
-1. **No Authentication**: The solution does not implement any authentication mechanisms.
-2. **Limited Automatic Tests**: Only a few automatic tests are included for demonstration purposes.
-3. **BSV Change Handling**: Changes of BSV funds are returned to the same address, which is not the best practice. Funds are not prepared in advance.
-4. **Primary Key Storage**: The primary key is stored in plain text. If a transaction is not broadcasted successfully, there is no logic to retry.
-5. **Hardcoded Data**: All data are hardcoded and stored only in memory. There are no endpoints to refill/manage ingredients.
-6. **Limited Logging**: The solution includes limited logging functionality.
-7. **No Health Checks**: There are no health check endpoints implemented.
-8. **Not Dockerized**: The solution is not containerized using Docker.
-9. **NO CI/CD**
-10. **No Open API Schema**
+5. Test the end endpoints:
+	### Public endpoints:
+	# Get API Gateway URL from outputs
+	export API_URL="https://0cdx6380gc.execute-api.eu-west-1.amazonaws.com/prod"
+
+	# GET /beverages (public)
+		curl "${API_URL}/beverages"
+
+	# POST /beverages request with JSON body
+		curl -X POST "${API_URL}/beverages" \
+  			-H "Content-Type: application/json" \
+  			-d '{
+    		"beverageName": "coffee",
+    		"sugarLevel": 1,
+    		"coins": [1, 1, 1]
+  			}'
+
+  	### Private Endpoints:
+  	TASK_ARN=$(aws ecs list-tasks --cluster beverage-vending-cluster --query 'taskArns[0]' --output text)
+
+  	# Connect to SSM:
+		aws ecs execute-command \
+  		--cluster beverage-vending-cluster \
+  		--task $TASK_ARN \
+ 		--container beverage-vending-container \
+  		--command "/bin/sh" \
+  		--interactive
+
+	# Test the private ALB endpoint
+		curl -v "http://beverage-vending-alb-1420752413.eu-west-1.elb.amazonaws.com/ingredients"
+
+
+6. Remember to destroy the deployment with destroy.sh script and follow on screen instructions
+	./scripts/destroy.sh

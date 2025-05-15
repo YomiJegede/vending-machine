@@ -10,6 +10,7 @@ resource "aws_appautoscaling_target" "ecs" {
   depends_on = [aws_ecs_service.main]
 }
 
+#  CPU-based scaling policy
 resource "aws_appautoscaling_policy" "ecs_cpu" {
   name               = "${var.env_prefix}-cpu-autoscaling-policy"
   policy_type        = "TargetTrackingScaling"

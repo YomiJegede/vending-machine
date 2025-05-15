@@ -51,5 +51,5 @@ variable "ecs_security_group_id" {
 variable "nlb_target_group_arn" {
   description = "ARN of the NLB target group for VPC Link"
   type        = string
-  default     = "" # Make optional if not all environments need it
+  default     = "" 
 }

@@ -5,7 +5,7 @@ set -euo pipefail  # Strict error handling
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 function log_error() {
   echo -e "${RED}[ERROR] $1${NC}" >&2
@@ -57,7 +57,7 @@ function handle_docker() {
     fi
   fi
 
-  # Ensure buildx builder exists and is used
+  # Ensure buildx builder exists
   if ! docker buildx inspect multi-builder >/dev/null 2>&1; then
     log_info "Creating Docker Buildx builder..."
     docker buildx create --name multi-builder --use
@@ -65,7 +65,7 @@ function handle_docker() {
     docker buildx use multi-builder
   fi
 
-  # Build and push for linux/amd64
+  # Build and push for linux/amd64 to support fargate
   log_info "Building Docker image for linux/amd64..."
   if ! docker buildx build \
     --platform linux/amd64 \

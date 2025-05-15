@@ -63,10 +63,10 @@ resource "aws_api_gateway_deployment" "deployment" {
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name  = "prod"
+  stage_name  = "test"
 }
 
 resource "aws_api_gateway_vpc_link" "vpc_link" {
   name        = "${var.env_prefix}-vpc-link"
-  target_arns = [var.vpc_link_target_arn]  # Must match variable name
+  target_arns = [var.vpc_link_target_arn]
 }

@@ -101,7 +101,7 @@ resource "aws_security_group" "nlb" {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.main.cidr_block]  # Only allow from VPC
+    cidr_blocks = [aws_vpc.main.cidr_block]
   }
 
   egress {
@@ -119,7 +119,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public[0].id  # Use dynamically created public subnet
+  subnet_id     = aws_subnet.public[0].id 
   tags          = { Name = "${var.env_prefix}-nat-gw" }
   depends_on    = [aws_internet_gateway.gw]
 }

@@ -1,4 +1,4 @@
-# Use official Node.js LTS image
+# official Node.js LTS image
 FROM node:18-alpine
 
 # Install curl
@@ -15,11 +15,11 @@ RUN npm install
 # Bundle app source
 COPY src ./src
 
-# Build TypeScript
+# Build
 RUN npm run build
 
 # Set environment variables
-ENV NODE_ENV=production
+ENV NODE_ENV=dev
 ENV PORT=3000
 
 # Expose the application port

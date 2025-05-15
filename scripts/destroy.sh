@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail  # Strict error handling
+set -euo pipefail 
 
 echo "=== Infrastructure Destruction Script ==="
 echo "This will PERMANENTLY delete all resources."
