@@ -13,6 +13,8 @@ This project aims to develop a system to manage a beverage vending machine. Each
 5. **Beverage Dispensing**: If sufficient ingredients are available, the beverage is dispensed and change is returned.
 6. **Transaction Propagation**: Successful transactions are propagated as a JSON object into BSV (Bitcoin SV).
 
+## Design and Deployment
+
 The deployment design and architecture for the beverage vending machine microservice is implemented on AWS using Terraform for infrastructure provisioning. Public and private endpoints are separated by routing public traffic through an Application Load Balancer (ALB) and private API requests through a Network Load Balancer (NLB) integrated with API Gateway VPC Link. The system operates within a VPC using private subnets, with a NAT Gateway enabling secure outbound internet access.
 
 
@@ -29,7 +31,7 @@ The deployment design and architecture for the beverage vending machine microser
 **Fargate Tasks**: Containerized deployment of the microservice
 	No EC2 instances
 	SSM Exec for direct debugging
-	Auto-scaling capable
+	Auto-scaling capability deployed
 
 ### Security
 **Isolated Networking**:
@@ -60,7 +62,7 @@ The deployment design and architecture for the beverage vending machine microser
 
 ## Architecture Overview 
 ### AWS Public Zone
-    APIGateway --> API Gateway --> Public endpoints --> beverages GET|POST/]
+    APIGateway --> [API Gateway --> Public endpoints --> beverages GET|POST/]
     End User -->|HTTPS| --> APIGateway
 
 ### AWS Private Zone
@@ -93,22 +95,22 @@ The deployment design and architecture for the beverage vending machine microser
 	git clone git@github.com:YomiJegede/vending-machine.git
 
 2. Navigate to the project directory
-	cd vending-machine
+	cd vending-machine/scripts
 
-3. Run deploy script and follow on screen instructions
-	./scripts/deploy.sh
+3. Run deploy script and follow the on screen instructions
+	./deploy.sh
 
 4. On successful deployment, note the outputs for public and private endpoints and the VPC
 	example:
-	api_gateway_url = "https://0cdx6380gc.execute-api.eu-west-1.amazonaws.com/prod"
-	ecs_service_name = "beverage-vending-service"
-	private_endpoint_url = "beverage-vending-alb-1420752413.eu-west-1.elb.amazonaws.com"
-	vpc_id = "vpc-004c4c235a61d41da"
+	api_gateway_url = "https://ybxxezkhmb.execute-api.eu-west-1.amazonaws.com/test"
+    ecs_service_name = "beverage-vending-service"
+    private_endpoint_url = "beverage-vending-alb-189198045.eu-west-1.elb.amazonaws.com"
+    vpc_id = "vpc-04a3b04acf51d3812"
 
 5. Test the end endpoints:
 	### Public endpoints:
 	# Get API Gateway URL from outputs
-	export API_URL="https://0cdx6380gc.execute-api.eu-west-1.amazonaws.com/prod"
+	export API_URL="https://ybxxezkhmb.execute-api.eu-west-1.amazonaws.com/test"
 
 	# GET /beverages (public)
 		curl "${API_URL}/beverages"
@@ -122,7 +124,7 @@ The deployment design and architecture for the beverage vending machine microser
     		"coins": [1, 1, 1]
   			}'
 
-  	### Private Endpoints:
+  	### Private Endpoints: set TASK_ARN
   	TASK_ARN=$(aws ecs list-tasks --cluster beverage-vending-cluster --query 'taskArns[0]' --output text)
 
   	# Connect to SSM:
@@ -134,8 +136,10 @@ The deployment design and architecture for the beverage vending machine microser
   		--interactive
 
 	# Test the private ALB endpoint
-		curl -v "http://beverage-vending-alb-1420752413.eu-west-1.elb.amazonaws.com/ingredients"
+      Get private_endpoint_url from outputs
+		curl -v "http://beverage-vending-alb-189198045.eu-west-1.elb.amazonaws.com/ingredients"
 
 
-6. Remember to destroy the deployment with destroy.sh script and follow on screen instructions
-	./scripts/destroy.sh
+6. Remember to destroy the deployment with destroy.sh script. Follow the on screen instructions
+    cd vending-machine/scripts
+	./destroy.sh
