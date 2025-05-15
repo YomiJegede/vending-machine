@@ -53,6 +53,7 @@ The deployment design and architecture for the beverage vending machine microser
 **Node.js**: For building RESTful APIs.
 **AWS**: Comprehensive cloud services with good Terraform support
 **Terraform**: Industry-standard IaC tool for reproducible infrastructure
+**ECR (Elastic Container Registry)**: Docker images storage and ECS Fargate pulls images directly from ECR during task launch
 **ECS Fargate**: Serverless containers simplify deployment and scaling
 **API Gateway**: Flexible endpoint management with built-in security
 **Docker**: Containerization ensures consistent runtime environment
@@ -96,7 +97,7 @@ The deployment design and architecture for the beverage vending machine microser
 2. Navigate to the project directory
 	cd vending-machine/scripts
 
-3. Run deploy script and follow the on screen instructions
+3. Grant `deploy.sh` necesary permisions if needed `chmod +x deploy.sh` , Run deploy script and follow the on screen instructions
 	./deploy.sh
 
 4. On successful deployment, note the outputs for public and private endpoints and the VPC
@@ -139,6 +140,7 @@ The deployment design and architecture for the beverage vending machine microser
 		curl -v "http://beverage-vending-alb-189198045.eu-west-1.elb.amazonaws.com/ingredients"
 
 
-6. Remember to destroy the deployment with destroy.sh script. Follow the on screen instructions
+6. Remember to destroy the deployment with `destroy.sh` script. Follow the on screen 		instructions.
+   Grant `destroy.sh` necesary permisions if needed `chmod +x destroy.sh` , Run destroy script
     cd vending-machine/scripts
 	./destroy.sh
