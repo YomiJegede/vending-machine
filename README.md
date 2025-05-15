@@ -128,7 +128,7 @@ The deployment design and architecture for the beverage vending machine microser
 	#### Get API Gateway URL from outputs
 	export API_URL="https://ybxxezkhmb.execute-api.eu-west-1.amazonaws.com/test"
 
-	### GET /beverages (public)
+	#### GET /beverages (public)
 		curl "${API_URL}/beverages"
 
 	#### POST /beverages request with JSON body
@@ -139,7 +139,7 @@ The deployment design and architecture for the beverage vending machine microser
     		"sugarLevel": 1,
     		"coins": [1, 1, 1]
   			}'
-	#### Private Endpoints: set TASK_ARN
+	### Private Endpoints: set TASK_ARN
   	`TASK_ARN=$(aws ecs list-tasks --cluster beverage-vending-cluster --query 'taskArns[0]' --output text)`
 
   	#### Connect to SSM:
