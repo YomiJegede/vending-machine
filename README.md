@@ -36,8 +36,11 @@ The deployment design and architecture for the beverage vending machine microser
 
 ### Compute
 **Fargate Tasks**: Containerized deployment of the microservice
+
 	No EC2 instances
+
 	SSM Exec for direct debugging
+
 	Auto-scaling capability deployed
 
 ### Security
@@ -45,12 +48,12 @@ The deployment design and architecture for the beverage vending machine microser
 	Private subnets + NAT Gateway/VPC endpoints
 
 **IAM-Based Access**:
-	SSM requires ecs:ExecuteCommand permissions
+	SSM with ecs:ExecuteCommand permissions
 
 ### Operational Tools
-**SSM Session Manager**: Secure shell access without bastion hosts
+**SSM Session Manager**: Secure shell privtae access for temporary connection
 
-**CloudWatch Logs**: Centralized logging and monitoring for all containers
+**CloudWatch Logs**: Centralized logging and monitoring for containers
 
 ### Scaling
 **Horizontal Scaling**:
@@ -62,9 +65,9 @@ The deployment design and architecture for the beverage vending machine microser
 ### Technologies Used
 **Node.js**: For building RESTful APIs.
 
-**AWS**: Comprehensive cloud services with good Terraform support
+**AWS**: Cloud services deployment
 
-**Terraform**: Industry-standard IaC tool for reproducible infrastructure
+**Terraform**:  IaC tool for reproducible infrastructure
 
 **ECR (Elastic Container Registry)**: Docker images storage and ECS Fargate pulls images directly from ECR during task launch
 
@@ -72,9 +75,9 @@ The deployment design and architecture for the beverage vending machine microser
 
 **API Gateway**: Flexible endpoint management with built-in security
 
-**Docker**: Containerization ensures consistent runtime environment
+**Docker**: Containerisation to ensure consistent runtime environment
 
-**Shell Scripting**: To package the deployment and for de-provioning
+**Shell Scripting**: To package the deployment and for de-provisioning
 
 
 ## Architecture Overview 
