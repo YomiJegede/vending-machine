@@ -37,10 +37,8 @@ The deployment design and architecture for the beverage vending machine microser
 ### Compute
 **Fargate Tasks**: Containerized deployment of the microservice
 
-	No EC2 instances
-
+	No EC2 instances to avoid undifferentiated heavy lifting
 	SSM Exec for direct debugging
-
 	Auto-scaling capability deployed
 
 ### Security
