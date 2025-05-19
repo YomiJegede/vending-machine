@@ -13,6 +13,12 @@ This project aims to develop a system to manage a beverage vending machine. Each
 5. **Beverage Dispensing**: If sufficient ingredients are available, the beverage is dispensed and change is returned.
 6. **Transaction Propagation**: Successful transactions are propagated as a JSON object into BSV (Bitcoin SV).
 
+## Requirements:
+
+1. Deploy two endpoints (GET /beverages and POST /beverages) from the microservice publicly accessible over the internet.
+
+2. Deploy one endpoint (GET /ingredients) from the microservice privately, accessible only within a private network.
+
 ## Design and Deployment
 
 The deployment design and architecture for the beverage vending machine microservice is implemented on AWS using Terraform for infrastructure provisioning. Public and private endpoints are separated by routing public traffic through an Application Load Balancer (ALB) and private API requests through a Network Load Balancer (NLB) integrated with API Gateway VPC Link. The system operates within a VPC using private subnets, with a NAT Gateway enabling secure outbound internet access.
