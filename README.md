@@ -162,7 +162,7 @@ The deployment design and architecture for the beverage vending machine microser
 	#### Test the private ALB endpoint
       Get private_endpoint_url from outputs
 
-		`curl -v "http://beverage-vending-alb-189198045.eu-west-1.elb.amazonaws.com/ingredients"`
+		curl -v "http://beverage-vending-alb-189198045.eu-west-1.elb.amazonaws.com/ingredients"
 
 
 6. Remember to destroy the deployment with `destroy.sh` script. Follow the on screen 		instructions.
