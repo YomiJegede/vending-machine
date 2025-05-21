@@ -51,7 +51,8 @@ resource "aws_api_gateway_integration" "private" {
   http_method             = aws_api_gateway_method.private[count.index].http_method
   integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
-  uri                     = "http://${var.alb_dns_name}${var.private_route_paths[count.index]}"
+  # uri                   = "http://${var.alb_dns_name}${var.private_route_paths[count.index]}"
+  uri                     = "http://${var.vpc_link_nlb_dns_name}${var.private_route_paths[count.index]}"
   connection_type         = "VPC_LINK"
   connection_id           = aws_api_gateway_vpc_link.vpc_link.id
 }
