@@ -84,14 +84,11 @@ The deployment design and architecture for the beverage vending machine microser
     End User -->|HTTPS| --> APIGateway
 
 ### AWS Private Zone
-    APIGateway -->|VPC Link| NLB[Network Load Balancer --> Private only]
+    APIGateway --> VPC Link -> NLB(Network Load Balancer) --> ECS (port 3000)
     
 ### VPC
-     NLB -->|:3000| FargateTasks[ECS Fargate Tasks --> LaunchType=FARGATE --> SSM Exec access --> ingredients GET/]
+     NLB -->|:3000| FargateTasks[ECS --> SSM Exec access --> ingredients GET/]
       
-      FargateTasks --> ALB[Application LB --> Internal --> Path-based routing]
-      ALB -->|:3000| FargateTasks
-      FargateTasks --> ECR[ECR Private Repo]
       SSM[SSM Session Manager] -->|Secure Shell| FargateTasks
 
 	  Admin --> AWSCLI --> |SSM CLI| SSM
